@@ -12,12 +12,13 @@ int main() {
         scanf("%d", &arr[i]);
     }
 
+    printf("Enter position (1-based): ");
+    scanf("%d", &pos);
+    
     printf("Enter element to insert: ");
     scanf("%d", &x);
 
-    printf("Enter position (1-based): ");
-    scanf("%d", &pos);
-
+   
     if(pos < 1 || pos > n + 1) {
         printf("Invalid position!\n");
     } else {
