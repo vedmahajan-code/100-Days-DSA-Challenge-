@@ -1,1 +1,36 @@
+# Problem: Given an array of integers, count the number of subarrays whose sum is equal to zero.
 
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    int *arr = (int*)malloc(n * sizeof(int));
+    for(int i = 0; i < n; i++)
+        scanf("%d", &arr[i]);
+
+   
+    int size = 200001;
+    int offset = 100000;
+    int *freq = (int*)calloc(size, sizeof(int));
+
+    int sum = 0, count = 0;
+    freq[offset] = 1;   
+
+    for(int i = 0; i < n; i++) {
+        sum += arr[i];
+
+        if(freq[sum + offset] > 0)
+            count += freq[sum + offset];
+
+        freq[sum + offset]++;
+    }
+
+    printf("%d\n", count);
+
+    free(arr);
+    free(freq);
+    return 0;
+}
