@@ -1,0 +1,51 @@
+# Problem Statement
+Using DFS or BFS, count number of connected components.
+
+#include <stdio.h>
+
+#define MAX 100
+
+int graph[MAX][MAX];
+int visited[MAX];
+int n;
+
+void dfs(int node) {
+    visited[node] = 1;
+
+    for (int i = 0; i < n; i++) {
+        if (graph[node][i] == 1 && !visited[i]) {
+            dfs(i);
+        }
+    }
+}
+
+int main() {
+    int components = 0;
+
+    // Input number of vertices
+    scanf("%d", &n);
+
+    // Input adjacency matrix
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            scanf("%d", &graph[i][j]);
+        }
+    }
+
+    // Initialize visited array
+    for (int i = 0; i < n; i++) {
+        visited[i] = 0;
+    }
+
+    // Count components
+    for (int i = 0; i < n; i++) {
+        if (!visited[i]) {
+            dfs(i);
+            components++;
+        }
+    }
+
+    printf("%d\n", components);
+
+    return 0;
+}
