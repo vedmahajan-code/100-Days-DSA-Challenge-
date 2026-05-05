@@ -1,1 +1,113 @@
+# Problem: Rotate Linked List Right by k Places - Implement using linked list with dynamic memory allocation.
 
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+int main() {
+
+    int n, k, x;
+
+    struct Node *head = NULL, *temp = NULL, *newNode, *last;
+
+    scanf("%d", &n);
+
+    for(int i = 0; i < n; i++)
+    {
+        scanf("%d", &x);
+
+        newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->data = x;
+        newNode->next = NULL;
+
+        if(head == NULL)
+        {
+            head = newNode;
+            last = newNode;
+        }
+        else
+        {
+            last->next = newNode;
+            last = newNode;
+        }
+    }
+
+    scanf("%d", &k);
+
+    if(head == NULL || k == 0)
+        temp = head;
+
+   
+    int len = 1;
+    temp = head;
+    while(temp->next != NULL)
+    {
+        temp = temp->next;
+        len++;
+    }
+
+    
+    temp->next = head;
+
+    k = k % len;
+    int steps = len - k;
+
+    struct Node* newTail = head;
+
+    for(int i = 1; i < steps; i++)
+        newTail = newTail->next;
+
+    head = newTail->next;
+    newTail->next = NULL;
+
+    
+    temp = head;
+    while(temp != NULL)
+    {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+
+    return 0;
+}
+
+# You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.
+
+struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2) {
+    
+    struct ListNode *dummy = (struct ListNode*)malloc(sizeof(struct ListNode));
+    struct ListNode *temp = dummy;
+    dummy->next = NULL;
+    
+    int carry = 0;
+    
+    while(l1 != NULL || l2 != NULL || carry != 0) {
+        
+        int sum = carry;
+        
+        if(l1 != NULL){
+            sum += l1->val;
+            l1 = l1->next;
+        }
+        
+        if(l2 != NULL){
+            sum += l2->val;
+            l2 = l2->next;
+        }
+        
+        carry = sum / 10;
+        
+        struct ListNode *newNode = (struct ListNode*)malloc(sizeof(struct ListNode));
+        newNode->val = sum % 10;
+        newNode->next = NULL;
+        
+        temp->next = newNode;
+        temp = temp->next;
+    }
+    
+    return dummy->next;
+}
