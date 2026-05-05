@@ -1,0 +1,115 @@
+# Implement a Queue using a linked list supporting enqueue and dequeue operations.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node
+{
+    int data;
+    struct Node* next;
+};
+
+struct Node* front = NULL;
+struct Node* rear = NULL;
+
+void enqueue(int value)
+{
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    newNode->next = NULL;
+
+    if(rear == NULL)
+    {
+        front = rear = newNode;
+    }
+    else
+    {
+        rear->next = newNode;
+        rear = newNode;
+    }
+}
+
+int dequeue()
+{
+    if(front == NULL)
+        return -1;
+
+    struct Node* temp = front;
+    int value = temp->data;
+
+    front = front->next;
+
+    if(front == NULL)
+        rear = NULL;
+
+    free(temp);
+    return value;
+}
+
+int main()
+{
+    int N, op, value;
+
+    printf("Enter number of operations: ");
+    scanf("%d", &N);
+
+    printf("\n1 = Enqueue\n2 = Dequeue\n");
+
+    for(int i = 0; i < N; i++)
+    {
+        printf("\nEnter operation: ");
+        scanf("%d", &op);
+
+        if(op == 1)
+        {
+            printf("Enter value: ");
+            scanf("%d", &value);
+            enqueue(value);
+        }
+        else if(op == 2)
+        {
+            printf("%d\n", dequeue());
+        }
+        else
+        {
+            printf("Invalid operation\n");
+        }
+    }
+
+    return 0;
+}
+
+# You are given an array of CPU tasks, each labeled with a letter from A to Z, and a number n. Each CPU interval can be idle or allow the completion of one task. Tasks can be completed in any order, but there's a constraint: there has to be a gap of at least n intervals between two tasks with the same label.
+
+#include <stdlib.h>
+
+int leastInterval(char* tasks, int tasksSize, int n) {
+    
+    int freq[26] = {0};
+    
+    // Count frequency of each task
+    for(int i = 0; i < tasksSize; i++)
+        freq[tasks[i] - 'A']++;
+    
+    int maxFreq = 0;
+    
+    for(int i = 0; i < 26; i++)
+        if(freq[i] > maxFreq)
+            maxFreq = freq[i];
+    
+    int countMax = 0;
+    
+    for(int i = 0; i < 26; i++)
+        if(freq[i] == maxFreq)
+            countMax++;
+    
+    int partCount = maxFreq - 1;
+    int partLength = n + 1;
+    
+    int result = partCount * partLength + countMax;
+    
+    if(result < tasksSize)
+        return tasksSize;
+    
+    return result;
+}
