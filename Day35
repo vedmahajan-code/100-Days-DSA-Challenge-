@@ -1,0 +1,91 @@
+# Problem: Queue Using Array - Implement using linked list with dynamic memory allocation.
+
+#include <stdio.h>
+#define MAX 100
+
+int queue[MAX];
+int front = -1, rear = -1;
+
+void enqueue(int value) {
+    if (rear == MAX - 1) {
+        printf("Queue Overflow\n");
+        return;
+    }
+
+    if (front == -1)
+        front = 0;
+
+    queue[++rear] = value;
+}
+
+void display() {
+    for (int i = front; i <= rear; i++) {
+        printf("%d ", queue[i]);
+    }
+}
+
+int main() {
+    int n, x;
+
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &x);
+        enqueue(x);
+    }
+
+    display();
+
+    return 0;
+}
+
+# Implement a first in first out (FIFO) queue using only two stacks. The implemented queue should support all the functions of a normal queue (push, peek, pop, and empty).
+
+#include <stdlib.h>
+#include <stdbool.h>
+
+typedef struct {
+    int stack1[1000];
+    int stack2[1000];
+    int top1;
+    int top2;
+} MyQueue;
+
+MyQueue* myQueueCreate() {
+    MyQueue* obj = (MyQueue*)malloc(sizeof(MyQueue));
+    obj->top1 = -1;
+    obj->top2 = -1;
+    return obj;
+}
+
+void myQueuePush(MyQueue* obj, int x) {
+    obj->stack1[++obj->top1] = x;
+}
+
+void transfer(MyQueue* obj) {
+    while(obj->top1 != -1) {
+        obj->stack2[++obj->top2] = obj->stack1[obj->top1--];
+    }
+}
+
+int myQueuePop(MyQueue* obj) {
+    if(obj->top2 == -1)
+        transfer(obj);
+
+    return obj->stack2[obj->top2--];
+}
+
+int myQueuePeek(MyQueue* obj) {
+    if(obj->top2 == -1)
+        transfer(obj);
+
+    return obj->stack2[obj->top2];
+}
+
+bool myQueueEmpty(MyQueue* obj) {
+    return (obj->top1 == -1 && obj->top2 == -1);
+}
+
+void myQueueFree(MyQueue* obj) {
+    free(obj);
+}
