@@ -1,0 +1,152 @@
+# Problem Statement: Implement a Min Heap using an array where the smallest element is always at the root.
+
+#include <stdio.h>
+
+#define MAX 1000
+
+int heap[MAX];
+int size = 0;
+
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+
+void heapifyUp(int index) {
+    while (index > 0) {
+        int parent = (index - 1) / 2;
+
+        if (heap[parent] > heap[index]) {
+            swap(&heap[parent], &heap[index]);
+            index = parent;
+        } else {
+            break;
+        }
+    }
+}
+
+
+void heapifyDown(int index) {
+    int smallest = index;
+
+    while (1) {
+        int left = 2 * index + 1;
+        int right = 2 * index + 2;
+
+        if (left < size && heap[left] < heap[smallest])
+            smallest = left;
+
+        if (right < size && heap[right] < heap[smallest])
+            smallest = right;
+
+        if (smallest != index) {
+            swap(&heap[index], &heap[smallest]);
+            index = smallest;
+        } else {
+            break;
+        }
+    }
+}
+
+void insert(int x) {
+    heap[size] = x;
+    size++;
+    heapifyUp(size - 1);
+}
+
+
+int peek() {
+    if (size == 0)
+        return -1;
+    return heap[0];
+}
+
+
+int extractMin() {
+    if (size == 0)
+        return -1;
+
+    int min = heap[0];
+    heap[0] = heap[size - 1];
+    size--;
+
+    heapifyDown(0);
+
+    return min;
+}
+
+int main() {
+    int N;
+    scanf("%d", &N);
+
+    for (int i = 0; i < N; i++) {
+        char operation[20];
+        scanf("%s", operation);
+
+        if (operation[0] == 'i') {  // insert
+            int x;
+            scanf("%d", &x);
+            insert(x);
+        }
+        else if (operation[0] == 'p') { // peek
+            printf("%d\n", peek());
+        }
+        else if (operation[0] == 'e') { // extractMin
+            printf("%d\n", extractMin());
+        }
+    }
+
+    return 0;
+}
+
+# Given an integer array nums and an integer k, return the k most frequent elements. You may return the answer in any order.
+
+int* topKFrequent(int* nums, int numsSize, int k, int* returnSize) {
+    
+    int freq[20001] = {0};   
+    int offset = 10000;      
+    
+   
+    for(int i = 0; i < numsSize; i++)
+        freq[nums[i] + offset]++;
+    
+    
+    int unique[numsSize];
+    int count = 0;
+    
+    for(int i = 0; i < numsSize; i++) {
+        int found = 0;
+        for(int j = 0; j < count; j++) {
+            if(unique[j] == nums[i]) {
+                found = 1;
+                break;
+            }
+        }
+        if(!found)
+            unique[count++] = nums[i];
+    }
+    
+   
+    for(int i = 0; i < count - 1; i++) {
+        for(int j = i + 1; j < count; j++) {
+            if(freq[unique[i] + offset] < freq[unique[j] + offset]) {
+                int temp = unique[i];
+                unique[i] = unique[j];
+                unique[j] = temp;
+            }
+        }
+    }
+    
+   
+    int* result = (int*)malloc(sizeof(int) * k);
+    
+    for(int i = 0; i < k; i++)
+        result[i] = unique[i];
+    
+    *returnSize = k;
+    
+    return result;
+}
