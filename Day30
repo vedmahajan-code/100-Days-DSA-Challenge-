@@ -1,0 +1,107 @@
+# Problem: Polynomial Using Linked List - Implement using linked list with dynamic memory allocation.
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node{
+    int coeff;
+    int exp;
+    struct Node* next;
+};
+
+struct Node* createNode(int c, int e){
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->coeff = c;
+    newNode->exp = e;
+    newNode->next = NULL;
+    return newNode;
+}
+
+struct Node* insert(struct Node* head, int c, int e){
+    struct Node* newNode = createNode(c,e);
+
+    if(head == NULL){
+        return newNode;
+    }
+
+    struct Node* temp = head;
+    while(temp->next != NULL){
+        temp = temp->next;
+    }
+
+    temp->next = newNode;
+    return head;
+}
+
+void display(struct Node* head){
+    struct Node* temp = head;
+
+    while(temp != NULL){
+        if(temp->exp == 0)
+            printf("%d", temp->coeff);
+        else if(temp->exp == 1)
+            printf("%dx", temp->coeff);
+        else
+            printf("%dx^%d", temp->coeff, temp->exp);
+
+        if(temp->next != NULL)
+            printf(" + ");
+
+        temp = temp->next;
+    }
+}
+
+int main(){
+    int n, c, e;
+    struct Node* head = NULL;
+
+    scanf("%d",&n);
+
+    for(int i=0;i<n;i++){
+        scanf("%d %d",&c,&e);
+        head = insert(head,c,e);
+    }
+
+    display(head);
+
+    return 0;
+}
+
+# You are given two non-empty linked lists representing two non-negative integers. The most significant digit comes first and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.
+
+struct ListNode* addTwoNumbers(struct ListNode* l1, struct ListNode* l2) {
+    
+    int s1[100], s2[100];
+    int top1 = -1, top2 = -1;
+
+    while(l1){
+        s1[++top1] = l1->val;
+        l1 = l1->next;
+    }
+
+    while(l2){
+        s2[++top2] = l2->val;
+        l2 = l2->next;
+    }
+
+    int carry = 0;
+    struct ListNode* head = NULL;
+
+    while(top1 >= 0 || top2 >= 0 || carry){
+
+        int sum = carry;
+
+        if(top1 >= 0) sum += s1[top1--];
+        if(top2 >= 0) sum += s2[top2--];
+
+        carry = sum / 10;
+
+        struct ListNode* node = (struct ListNode*)malloc(sizeof(struct ListNode));
+        node->val = sum % 10;
+        node->next = head;
+
+        head = node;
+    }
+
+    return head;
+}
