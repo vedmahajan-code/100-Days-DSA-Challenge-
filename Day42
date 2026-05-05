@@ -1,0 +1,219 @@
+# Given a queue of integers, reverse the queue using a stack.
+
+#include <stdio.h>
+
+#define MAX 100
+
+int queue[MAX];
+int stack[MAX];
+int front = 0, rear = -1;
+int top = -1;
+
+// Enqueue operation
+void enqueue(int value)
+{
+    queue[++rear] = value;
+}
+
+// Dequeue operation
+int dequeue()
+{
+    return queue[front++];
+}
+
+// Push operation
+void push(int value)
+{
+    stack[++top] = value;
+}
+
+// Pop operation
+int pop()
+{
+    return stack[top--];
+}
+
+int main()
+{
+    int n;
+
+    printf("Enter number of elements: ");
+    scanf("%d", &n);
+
+    printf("Enter %d elements:\n", n);
+
+    for(int i = 0; i < n; i++)
+    {
+        int x;
+        scanf("%d", &x);
+        enqueue(x);
+    }
+
+    // Step 1: Move queue elements to stack
+    while(front <= rear)
+    {
+        push(dequeue());
+    }
+
+    // Reset queue
+    front = 0;
+    rear = -1;
+
+    // Step 2: Move stack elements back to queue
+    while(top != -1)
+    {
+        enqueue(pop());
+    }
+
+    printf("\nReversed Queue:\n");
+
+    for(int i = front; i <= rear; i++)
+    {
+        printf("%d ", queue[i]);
+    }
+
+    return 0;
+}
+
+# The median is the middle value in an ordered integer list. If the size of the list is even, there is no middle value, and the median is the mean of the two middle values.
+
+#include <stdlib.h>
+
+typedef struct {
+    int small[50000]; // max heap
+    int large[50000]; // min heap
+    int smallSize;
+    int largeSize;
+} MedianFinder;
+
+void swap(int *a, int *b){
+    int t = *a;
+    *a = *b;
+    *b = t;
+}
+
+/* -------- MAX HEAP -------- */
+
+void maxHeapifyUp(int heap[], int index){
+    while(index > 0){
+        int parent = (index - 1) / 2;
+        if(heap[parent] < heap[index]){
+            swap(&heap[parent], &heap[index]);
+            index = parent;
+        } else break;
+    }
+}
+
+void maxHeapifyDown(int heap[], int size, int index){
+    while(1){
+        int left = 2*index + 1;
+        int right = 2*index + 2;
+        int largest = index;
+
+        if(left < size && heap[left] > heap[largest])
+            largest = left;
+
+        if(right < size && heap[right] > heap[largest])
+            largest = right;
+
+        if(largest != index){
+            swap(&heap[index], &heap[largest]);
+            index = largest;
+        } else break;
+    }
+}
+
+/* -------- MIN HEAP -------- */
+
+void minHeapifyUp(int heap[], int index){
+    while(index > 0){
+        int parent = (index - 1) / 2;
+        if(heap[parent] > heap[index]){
+            swap(&heap[parent], &heap[index]);
+            index = parent;
+        } else break;
+    }
+}
+
+void minHeapifyDown(int heap[], int size, int index){
+    while(1){
+        int left = 2*index + 1;
+        int right = 2*index + 2;
+        int smallest = index;
+
+        if(left < size && heap[left] < heap[smallest])
+            smallest = left;
+
+        if(right < size && heap[right] < heap[smallest])
+            smallest = right;
+
+        if(smallest != index){
+            swap(&heap[index], &heap[smallest]);
+            index = smallest;
+        } else break;
+    }
+}
+
+/* -------- HEAP OPERATIONS -------- */
+
+void pushMax(MedianFinder* obj, int val){
+    obj->small[obj->smallSize] = val;
+    maxHeapifyUp(obj->small, obj->smallSize);
+    obj->smallSize++;
+}
+
+void pushMin(MedianFinder* obj, int val){
+    obj->large[obj->largeSize] = val;
+    minHeapifyUp(obj->large, obj->largeSize);
+    obj->largeSize++;
+}
+
+int popMax(MedianFinder* obj){
+    int val = obj->small[0];
+    obj->small[0] = obj->small[obj->smallSize-1];
+    obj->smallSize--;
+    maxHeapifyDown(obj->small, obj->smallSize, 0);
+    return val;
+}
+
+int popMin(MedianFinder* obj){
+    int val = obj->large[0];
+    obj->large[0] = obj->large[obj->largeSize-1];
+    obj->largeSize--;
+    minHeapifyDown(obj->large, obj->largeSize, 0);
+    return val;
+}
+
+/* -------- REQUIRED FUNCTIONS -------- */
+
+MedianFinder* medianFinderCreate() {
+    MedianFinder* obj = (MedianFinder*)malloc(sizeof(MedianFinder));
+    obj->smallSize = 0;
+    obj->largeSize = 0;
+    return obj;
+}
+
+void medianFinderAddNum(MedianFinder* obj, int num) {
+    
+    if(obj->smallSize == 0 || num <= obj->small[0])
+        pushMax(obj, num);
+    else
+        pushMin(obj, num);
+
+    if(obj->smallSize > obj->largeSize + 1)
+        pushMin(obj, popMax(obj));
+    else if(obj->largeSize > obj->smallSize)
+        pushMax(obj, popMin(obj));
+}
+
+double medianFinderFindMedian(MedianFinder* obj) {
+    
+    if(obj->smallSize > obj->largeSize)
+        return obj->small[0];
+
+    return ((double)obj->small[0] + obj->large[0]) / 2.0;
+}
+
+void medianFinderFree(MedianFinder* obj) {
+    free(obj);
+}
