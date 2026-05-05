@@ -1,0 +1,105 @@
+# Problem: Implement push and pop operations on a stack and verify stack operations.
+
+#include <stdio.h>
+#define MAX 100
+
+int stack[MAX];
+int top = -1;
+
+void push(int value) {
+    if (top == MAX - 1) {
+        printf("Stack Overflow\n");
+    } else {
+        stack[++top] = value;
+    }
+}
+
+void pop() {
+    if (top == -1) {
+        printf("Stack Underflow\n");
+    } else {
+        top--;
+    }
+}
+
+void display() {
+    for (int i = top; i >= 0; i--) {
+        printf("%d ", stack[i]);
+    }
+}
+
+int main() {
+    int n, m, x;
+
+    scanf("%d", &n);
+
+   
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &x);
+        push(x);
+    }
+
+   
+    scanf("%d", &m);
+
+    for (int i = 0; i < m; i++) {
+        pop();
+    }
+
+    
+    display();
+
+    return 0;
+}
+
+# Design a stack that supports push, pop, top, and retrieving the minimum element in constant time.
+
+#include <stdlib.h>
+
+typedef struct {
+    int *stack;
+    int *minStack;
+    int top;
+    int minTop;
+    int size;
+} MinStack;
+
+MinStack* minStackCreate() {
+    MinStack* obj = (MinStack*)malloc(sizeof(MinStack));
+    obj->size = 10000;
+    obj->stack = (int*)malloc(sizeof(int) * obj->size);
+    obj->minStack = (int*)malloc(sizeof(int) * obj->size);
+    obj->top = -1;
+    obj->minTop = -1;
+    return obj;
+}
+
+void minStackPush(MinStack* obj, int val) {
+    obj->stack[++obj->top] = val;
+
+    if (obj->minTop == -1 || val <= obj->minStack[obj->minTop])
+        obj->minStack[++obj->minTop] = val;
+    else
+        obj->minStack[++obj->minTop] = obj->minStack[obj->minTop];
+}
+
+void minStackPop(MinStack* obj) {
+    if (obj->top >= 0) {
+        obj->top--;
+        obj->minTop--;
+    }
+}
+
+int minStackTop(MinStack* obj) {
+    return obj->stack[obj->top];
+}
+
+int minStackGetMin(MinStack* obj) {
+    return obj->minStack[obj->minTop];
+}
+
+void minStackFree(MinStack* obj) {
+    free(obj->stack);
+    free(obj->minStack);
+    free(obj);
+}
