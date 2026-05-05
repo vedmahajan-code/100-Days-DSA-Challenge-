@@ -1,0 +1,86 @@
+# Problem: Convert an infix expression to postfix notation using stack.
+
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
+char stack[100];
+int top = -1;
+
+void push(char x){
+    stack[++top] = x;
+}
+
+char pop(){
+    return stack[top--];
+}
+
+int precedence(char x){
+    if(x=='+' || x=='-')
+        return 1;
+    if(x=='*' || x=='/')
+        return 2;
+    return 0;
+}
+
+int main(){
+    char infix[100];
+    scanf("%s", infix);
+
+    for(int i=0; i<strlen(infix); i++){
+        char c = infix[i];
+
+        if(isalnum(c)){          
+            printf("%c", c);
+        }
+        else{                   
+            while(top!=-1 && precedence(stack[top]) >= precedence(c)){
+                printf("%c", pop());
+            }
+            push(c);
+        }
+    }
+
+    while(top!=-1){
+        printf("%c", pop());
+    }
+
+    return 0;
+}
+
+# You are given an array of strings tokens that represents an arithmetic expression in a Reverse Polish Notation.
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int evalRPN(char **tokens, int tokensSize) {
+    int stack[10000];
+    int top = -1;
+
+    for(int i = 0; i < tokensSize; i++) {
+
+        if(strcmp(tokens[i], "+") == 0 ||
+           strcmp(tokens[i], "-") == 0 ||
+           strcmp(tokens[i], "*") == 0 ||
+           strcmp(tokens[i], "/") == 0) {
+
+            int b = stack[top--];
+            int a = stack[top--];
+
+            if(strcmp(tokens[i], "+") == 0)
+                stack[++top] = a + b;
+            else if(strcmp(tokens[i], "-") == 0)
+                stack[++top] = a - b;
+            else if(strcmp(tokens[i], "*") == 0)
+                stack[++top] = a * b;
+            else
+                stack[++top] = a / b;
+        }
+        else {
+            stack[++top] = atoi(tokens[i]);
+        }
+    }
+
+    return stack[top];
+}
