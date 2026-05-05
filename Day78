@@ -1,0 +1,60 @@
+# Problem Statement
+Given weighted undirected graph, compute total weight of Minimum Spanning Tree using Prim’s algorithm.
+
+#include <stdio.h>
+#include <limits.h>
+
+#define MAX 100
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    int graph[MAX][MAX];
+
+    // Input adjacency matrix
+    // 0 means no edge
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            scanf("%d", &graph[i][j]);
+        }
+    }
+
+    int selected[MAX] = {0};
+    selected[0] = 1;
+
+    int edges = 0;
+    int totalWeight = 0;
+
+    while (edges < n - 1) {
+        int min = INT_MAX;
+        int x = -1, y = -1;
+
+        for (int i = 0; i < n; i++) {
+            if (selected[i]) {
+                for (int j = 0; j < n; j++) {
+                    if (!selected[j] && graph[i][j] != 0) {
+                        if (graph[i][j] < min) {
+                            min = graph[i][j];
+                            x = i;
+                            y = j;
+                        }
+                    }
+                }
+            }
+        }
+
+        if (y == -1) {
+            printf("Graph is not connected\n");
+            return 0;
+        }
+
+        totalWeight += min;
+        selected[y] = 1;
+        edges++;
+    }
+
+    printf("%d\n", totalWeight);
+
+    return 0;
+}
